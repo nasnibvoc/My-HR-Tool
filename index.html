@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyHRTool - Modern HR Management</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SweetAlert2 for notifications -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fa-solid fa-layer-group logo-icon"></i>
+                    <span>MyHRTool</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-target="dashboard">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-target="employees">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Employees</span>
+                </a>
+                <a href="#" class="nav-item" data-target="organization">
+                    <i class="fa-solid fa-sitemap"></i>
+                    <span>Organization</span>
+                </a>
+                <a href="#" class="nav-item" data-target="attendance">
+                    <i class="fa-regular fa-calendar-check"></i>
+                    <span>Attendance</span>
+                </a>
+                <a href="#" class="nav-item" data-target="leave">
+                    <i class="fa-solid fa-plane-departure"></i>
+                    <span>Leave</span>
+                </a>
+                <a href="#" class="nav-item" data-target="documents">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <span>Documents</span>
+                </a>
+                <a href="#" class="nav-item" data-target="reports">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="#" class="nav-item" data-target="settings">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>HR Settings</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <!-- User profile removed per request -->
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="search-bar" style="position: relative;">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Search employees, documents..." onkeyup="if(window.globalSearch) window.globalSearch(this.value)">
+                    <div id="searchResults" style="display:none; position:absolute; top:120%; left:0; width:100%; background:var(--bg-panel); border:1px solid var(--border-color); border-radius:12px; z-index:1000; max-height:300px; overflow-y:auto; box-shadow:var(--shadow-lg); backdrop-filter:blur(10px);"></div>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="document.body.classList.toggle('light-mode')"><i class="fa-solid fa-moon"></i></button>
+                    <button class="icon-btn" onclick="if(window.showNotifications) window.showNotifications()"><i class="fa-regular fa-bell"></i><span class="badge">3</span></button>
+                    <button class="icon-btn" onclick="if(window.showMessages) window.showMessages()"><i class="fa-regular fa-envelope"></i></button>
+                    <button class="primary-btn" onclick="if(window.showQuickAdd) window.showQuickAdd()"><i class="fa-solid fa-plus"></i> Quick Add</button>
+                </div>
+            </header>
+
+            <!-- Dynamic View Container -->
+            <div id="view-container" class="view-container">
+                <!-- Content will be injected here by app.js -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Application Logic -->
+    <script src="app.js"></script>
+</body>
+</html>
