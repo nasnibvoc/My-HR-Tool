@@ -35,6 +35,37 @@ const defaultDB = {
     ]
 };
 
+const API_URL = 'http://localhost:3000/api';
+window.isBackendConnected = false;
+
+function updateConnectionStatusBadge() {
+    let headerActions = document.querySelector('.header-actions');
+    if (!headerActions) return;
+    let badge = document.getElementById('db-connection-badge');
+    if (!badge) {
+        badge = document.createElement('div');
+        badge.id = 'db-connection-badge';
+        badge.style.display = 'flex';
+        badge.style.alignItems = 'center';
+        badge.style.gap = '6px';
+        badge.style.fontSize = '12px';
+        badge.style.fontWeight = '500';
+        badge.style.padding = '6px 12px';
+        badge.style.borderRadius = '20px';
+        badge.style.marginRight = '12px';
+        headerActions.insertBefore(badge, headerActions.firstChild);
+    }
+    if (window.isBackendConnected) {
+        badge.innerHTML = `<span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; display: inline-block;"></span> <span style="color: #10b981;">PostgreSQL Connected</span>`;
+        badge.style.background = 'rgba(16, 185, 129, 0.1)';
+        badge.style.border = '1px solid rgba(16, 185, 129, 0.2)';
+    } else {
+        badge.innerHTML = `<span style="width: 8px; height: 8px; background: #f59e0b; border-radius: 50%; display: inline-block;"></span> <span style="color: #f59e0b;">Local Mode</span>`;
+        badge.style.background = 'rgba(245, 158, 11, 0.1)';
+        badge.style.border = '1px solid rgba(245, 158, 11, 0.2)';
+    }
+}
+
 let DB = localStorage.getItem('MyHRTool_DB') ? JSON.parse(localStorage.getItem('MyHRTool_DB')) : defaultDB;
 if (!DB.payrollRecords) DB.payrollRecords = [];
 DB.employees.forEach(emp => {
@@ -46,8 +77,23 @@ DB.employees.forEach(emp => {
 if (!DB.jobs) DB.jobs = [];
 if (!DB.candidates) DB.candidates = [];
 if (!DB.performanceReviews) DB.performanceReviews = [];
-window.saveDB = function() {
+
+window.saveDB = async function() {
     localStorage.setItem('MyHRTool_DB', JSON.stringify(DB));
+    if (window.isBackendConnected) {
+        try {
+            const res = await fetch(`${API_URL}/db/sync`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(DB)
+            });
+            if (!res.ok) throw new Error('Sync failed');
+        } catch (err) {
+            console.error('Failed to sync to PostgreSQL backend:', err);
+            window.isBackendConnected = false;
+            updateConnectionStatusBadge();
+        }
+    }
 };
 
 if (!localStorage.getItem('MyHRTool_DB')) {
@@ -1055,68 +1101,7 @@ const views = {
         `;
     },
 
-    // 6. ORGANIZATION
-    organization: () => {
-        return `
-            <div class="page-header fade-in">
-                <div>
-                    <h1 class="page-title">Organization Chart</h1>
-                    <p class="page-subtitle">View company structure and reporting lines.</p>
-                </div>
-            </div>
-            <div class="card fade-in hierarchy-container" style="animation-delay: 0.1s; padding: 40px;">
-                <div class="hierarchy-node">
-                    <img src="${DB.employees[2].avatar}">
-                    <h4>Emily Chen</h4><p>CEO / HR Director</p>
-                </div>
-                <div style="height: 40px; width: 2px; background: var(--primary); margin: 0 auto;"></div>
-                <div style="display: flex; justify-content: center; position: relative;">
-                    <div style="position: absolute; top: 0; left: calc(50% - 150px); right: calc(50% - 150px); height: 2px; background: var(--primary);"></div>
-                    <div style="display: flex; gap: 40px; margin-top: 2px;">
-                        <div style="position: relative; padding-top: 40px;">
-                            <div style="position: absolute; top: 0; left: 50%; width: 2px; height: 40px; background: var(--primary);"></div>
-                            <div class="hierarchy-node"><img src="${DB.employees[0].avatar}"><h4>Sarah Connor</h4><p>Lead Engineer</p></div>
-                        </div>
-                        <div style="position: relative; padding-top: 40px;">
-                            <div style="position: absolute; top: 0; left: 50%; width: 2px; height: 40px; background: var(--primary);"></div>
-                            <div class="hierarchy-node"><img src="${DB.employees[1].avatar}"><h4>John Smith</h4><p>Product Manager</p></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    },
 
-    // 7. DOCUMENTS
-    documents: () => {
-        return `
-            <div class="page-header fade-in">
-                <div>
-                    <h1 class="page-title">Document Library</h1>
-                    <p class="page-subtitle">Company policies, templates, and guides.</p>
-                </div>
-                <button class="primary-btn" onclick="Swal.fire({title: 'Upload Document', text: 'Select a file to upload to the library', input: 'file', background: '#0f172a', color: 'white'})"><i class="fa-solid fa-upload"></i> Upload</button>
-            </div>
-            <div class="grid-4 fade-in" style="animation-delay: 0.1s;">
-                <div class="card" style="text-align: center; cursor: pointer;" onclick="Swal.fire({title: 'Employee Handbook.pdf', icon: 'info', background: '#0f172a', color: 'white'})">
-                    <i class="fa-solid fa-file-pdf" style="font-size: 48px; color: #ef4444; margin-bottom: 16px;"></i>
-                    <h4>Employee Handbook</h4><p style="font-size: 12px; color: var(--text-muted);">Updated Jan 2024</p>
-                </div>
-                <div class="card" style="text-align: center; cursor: pointer;" onclick="Swal.fire({title: 'Code of Conduct.pdf', icon: 'info', background: '#0f172a', color: 'white'})">
-                    <i class="fa-solid fa-file-pdf" style="font-size: 48px; color: #ef4444; margin-bottom: 16px;"></i>
-                    <h4>Code of Conduct</h4><p style="font-size: 12px; color: var(--text-muted);">Updated Mar 2023</p>
-                </div>
-                <div class="card" style="text-align: center; cursor: pointer;" onclick="Swal.fire({title: 'Holiday Policy.pdf', icon: 'info', background: '#0f172a', color: 'white'})">
-                    <i class="fa-solid fa-file-pdf" style="font-size: 48px; color: #ef4444; margin-bottom: 16px;"></i>
-                    <h4>Holiday Policy</h4><p style="font-size: 12px; color: var(--text-muted);">Updated Sep 2024</p>
-                </div>
-                <div class="card" style="text-align: center; cursor: pointer;" onclick="Swal.fire({title: 'Tax Forms.zip', icon: 'info', background: '#0f172a', color: 'white'})">
-                    <i class="fa-solid fa-file-zipper" style="font-size: 48px; color: #f59e0b; margin-bottom: 16px;"></i>
-                    <h4>Tax Forms</h4><p style="font-size: 12px; color: var(--text-muted);">Updated Feb 2024</p>
-                </div>
-            </div>
-        `;
-    },
 
     // 8. SETTINGS
     settings: () => {
@@ -1959,15 +1944,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     
     try {
-        const response = await fetch('http://localhost:3000/api/employees');
+        const response = await fetch(`${API_URL}/db`);
         if (response.ok) {
-            DB.employees = await response.json();
-            console.log("Loaded employees from backend:", DB.employees);
+            const data = await response.json();
+            // Merge with default/local fields in case structure differs
+            DB = { ...defaultDB, ...data };
+            window.isBackendConnected = true;
+            localStorage.setItem('MyHRTool_DB', JSON.stringify(DB));
+            console.log("Successfully connected to PostgreSQL backend and loaded state.");
+        } else {
+            throw new Error('Database response not OK');
         }
     } catch (err) {
-        console.error('Failed to fetch employees from backend, falling back to local DB', err);
+        console.warn('Failed to load database from PostgreSQL backend, using local storage fallback.', err);
+        window.isBackendConnected = false;
+        DB = localStorage.getItem('MyHRTool_DB') ? JSON.parse(localStorage.getItem('MyHRTool_DB')) : defaultDB;
     }
     
+    updateConnectionStatusBadge();
     renderView('dashboard');
 });
 
