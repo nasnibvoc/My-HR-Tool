@@ -1,0 +1,26 @@
+{
+  "name": "myhrtool",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "concurrently \"npx serve -l 8000\" \"node server/server.js\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nasnibvoc-arch/MyHRTool.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/nasnibvoc-arch/MyHRTool/issues"
+  },
+  "homepage": "https://github.com/nasnibvoc-arch/MyHRTool#readme",
+  "dependencies": {
+    "concurrently": "^10.0.4",
+    "serve": "^14.2.6"
+  }
+}
