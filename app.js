@@ -35,7 +35,7 @@ const defaultDB = {
     ]
 };
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = window.location.origin === 'null' || window.location.protocol === 'file:' ? 'http://localhost:3000/api' : '/api';
 window.isBackendConnected = false;
 
 function updateConnectionStatusBadge() {

@@ -291,6 +291,20 @@ app.post('/api/db/sync', async (req, res) => {
     }
 });
 
+const path = require('path');
+// Serve static files from the parent directory (root directory of project)
+app.use(express.static(path.join(__dirname, '..')));
+
+// Fallback to index.html for frontend requests
+app.get('*', (req, res, next) => {
+    // Avoid intercepting API routes
+    if (req.path.startsWith('/api')) {
+        return next();
+    }
+    res.sendFile(path.join(__dirname, '..', 'index.html'));
+});
+
 app.listen(port, () => {
     console.log(`MyHRTool Backend API running on http://localhost:${port}`);
 });
+
