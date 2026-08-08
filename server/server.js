@@ -296,7 +296,7 @@ const path = require('path');
 app.use(express.static(path.join(__dirname, '..')));
 
 // Fallback to index.html for frontend requests
-app.get('/*', (req, res, next) => {
+app.get('/(.*)', (req, res, next) => {
     // Avoid intercepting API routes
     if (req.path.startsWith('/api')) {
         return next();
