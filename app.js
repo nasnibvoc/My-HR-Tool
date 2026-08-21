@@ -1940,8 +1940,31 @@ window.exportData = function(type) {
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', async () => {
     document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', (e) => { e.preventDefault(); renderView(item.dataset.target); });
+        item.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            renderView(item.dataset.target); 
+            // Auto-close sidebar on mobile after selecting a view
+            document.querySelector('.sidebar')?.classList.remove('open');
+            document.getElementById('sidebar-overlay')?.classList.remove('active');
+        });
     });
+    
+    // Sidebar toggle controls
+    const sidebarToggleBtn = document.getElementById('sidebar-toggle');
+    const sidebarEl = document.querySelector('.sidebar');
+    const overlayEl = document.getElementById('sidebar-overlay');
+
+    if (sidebarToggleBtn && sidebarEl && overlayEl) {
+        sidebarToggleBtn.addEventListener('click', () => {
+            sidebarEl.classList.toggle('open');
+            overlayEl.classList.toggle('active');
+        });
+
+        overlayEl.addEventListener('click', () => {
+            sidebarEl.classList.remove('open');
+            overlayEl.classList.remove('active');
+        });
+    }
     
     try {
         const response = await fetch(`${API_URL}/db`);

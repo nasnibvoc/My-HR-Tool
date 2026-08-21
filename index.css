@@ -336,7 +336,7 @@ input, select, textarea { font-family: inherit; outline: none; }
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255,255,255,0.05);
     border-radius: var(--radius-xl);
-    overflow: hidden;
+    overflow-x: auto;
     margin-bottom: 32px;
 }
 
@@ -409,7 +409,33 @@ tr:hover .user-cell img { border-color: var(--primary); transform: scale(1.05); 
 .hierarchy-node h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
 .hierarchy-node p { font-size: 12px; color: var(--text-muted); }
 
-/* Responsive */
+/* Responsive Setup & Utilities */
+.sidebar-toggle {
+    display: none;
+}
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9;
+    backdrop-filter: blur(4px);
+    transition: var(--transition);
+}
+.sidebar-overlay.active {
+    display: block;
+}
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+}
+
+/* Responsive Breakpoints */
 @media (max-width: 1200px) {
     .grid-3 { grid-template-columns: repeat(2, 1fr); }
     .col-span-2 { grid-column: span 1; }
@@ -421,6 +447,48 @@ tr:hover .user-cell img { border-color: var(--primary); transform: scale(1.05); 
     .sidebar.open { transform: translateX(0); }
     .top-header { padding: 0 20px; }
     .view-container { padding: 20px; }
+    .sidebar-toggle { display: flex; }
+}
+@media (max-width: 680px) {
+    .top-header {
+        height: auto;
+        padding: 16px;
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+    }
+    .header-left {
+        width: 100%;
+    }
+    .search-bar {
+        width: 100%;
+        flex: 1;
+    }
+    .header-actions {
+        justify-content: space-between;
+        width: 100%;
+    }
+    .header-actions .primary-btn {
+        flex: 1;
+        justify-content: center;
+    }
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .tabs-container {
+        gap: 16px;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 8px;
+    }
+    .tab {
+        padding: 8px 4px;
+    }
+    .grid-4 {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ==========================================
