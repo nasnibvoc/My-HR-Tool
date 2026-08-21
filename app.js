@@ -672,19 +672,24 @@ const views = {
                     <table>
                         <thead><tr><th>Employee</th><th>Base Salary</th><th>Statutory (PF/ESI)</th><th>Actions</th></tr></thead>
                         <tbody>
-                            ${DB.employees.map(e => `
-                            <tr>
-                                <td><div class="user-cell"><img src="${e.avatar}"><span class="user-cell-name">${e.name}</span></div></td>
-                                <td>₹${e.salaryStructure.basic.toLocaleString('en-IN')}</td>
-                                <td>
-                                    <span class="status-badge ${e.statutory.pfEnabled ? 'active' : 'inactive'}">PF</span>
-                                    <span class="status-badge ${e.statutory.esiEnabled ? 'active' : 'inactive'}">ESI</span>
-                                </td>
-                                <td>
-                                    <button class="action-btn" style="background:var(--bg-panel); color:var(--text-main);" onclick="window.editSalaryStructure(${e.id})" title="Edit Salary Structure"><i class="fa-solid fa-pen"></i></button>
-                                    <button class="action-btn" style="background:var(--primary); color:white;" onclick="window.processPayroll(${e.id})" title="Run Payroll"><i class="fa-solid fa-play"></i> Run</button>
-                                </td>
-                            </tr>`).join('')}
+                            ${DB.employees.map(e => {
+                                const basicVal = e.salaryStructure ? e.salaryStructure.basic : 50000;
+                                const hasPF = e.statutory ? e.statutory.pfEnabled : false;
+                                const hasESI = e.statutory ? e.statutory.esiEnabled : false;
+                                return `
+                                <tr>
+                                    <td><div class="user-cell"><img src="${e.avatar}"><span class="user-cell-name">${e.name}</span></div></td>
+                                    <td>₹${basicVal.toLocaleString('en-IN')}</td>
+                                    <td>
+                                        <span class="status-badge ${hasPF ? 'active' : 'inactive'}">PF</span>
+                                        <span class="status-badge ${hasESI ? 'active' : 'inactive'}">ESI</span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn" style="background:var(--bg-panel); color:var(--text-main);" onclick="window.editSalaryStructure(${e.id})" title="Edit Salary Structure"><i class="fa-solid fa-pen"></i></button>
+                                        <button class="action-btn" style="background:var(--primary); color:white;" onclick="window.processPayroll(${e.id})" title="Run Payroll"><i class="fa-solid fa-play"></i> Run</button>
+                                    </td>
+                                </tr>`;
+                            }).join('')}
                         </tbody>
                     </table>
                 </div>
@@ -1770,6 +1775,8 @@ window.showAddEmployeeModal = function(emp = null) {
                         leaves: { total: 24, used: 0, accrualRate: 2 },
                         notes: '', timeline: [{date: new Date().toISOString().split('T')[0], event: 'Joined Company'}],
                         activityHistory: [], attendanceSettings: { checkInTime: '09:00', checkOutTime: '17:00' }, integrations: {},
+                        salaryStructure: { basic: 50000, allowances: 10000, hourlyRate: 500 },
+                        statutory: { pan: '', uan: '', pfEnabled: true, esiEnabled: false, bankAccount: '', ifsc: '', ptEnabled: true, tdsPercentage: 0, taxRegime: 'New Regime' },
                         ...val
                     };
                     const res = await fetch(`http://localhost:3000/api/employees`, {
@@ -1972,6 +1979,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             const data = await response.json();
             // Merge with default/local fields in case structure differs
             DB = { ...defaultDB, ...data };
+            if (!DB.payrollRecords) DB.payrollRecords = [];
+            DB.employees.forEach(emp => {
+                if (!emp.salaryStructure) emp.salaryStructure = { basic: 50000, allowances: 10000, hourlyRate: 500 };
+                if (!emp.statutory) emp.statutory = { pan: '', uan: '', pfEnabled: true, esiEnabled: false, bankAccount: '', ifsc: '', ptEnabled: true, tdsPercentage: 0, taxRegime: 'New Regime' };
+                if (!emp.onboarding) emp.onboarding = { status: 'Completed', progress: 100, checklist: [{task: 'Submit ID Documents', done: true}, {task: 'Sign NDA', done: true}, {task: 'Read Employee Handbook', done: true}, {task: 'IT Setup', done: true}], assets: [] };
+                if (!emp.goals) emp.goals = [];
+            });
             window.isBackendConnected = true;
             localStorage.setItem('MyHRTool_DB', JSON.stringify(DB));
             console.log("Successfully connected to PostgreSQL backend and loaded state.");
@@ -2654,6 +2668,13 @@ window.editSalaryStructure = function(empId) {
 window.processPayroll = function(empId) {
     const emp = DB.employees.find(e => e.id === empId);
     if(!emp) return;
+    
+    if (!emp.salaryStructure) {
+        emp.salaryStructure = { basic: 50000, allowances: 10000, hourlyRate: 500 };
+    }
+    if (!emp.statutory) {
+        emp.statutory = { pan: '', uan: '', pfEnabled: true, esiEnabled: false, bankAccount: '', ifsc: '', ptEnabled: true, tdsPercentage: 0, taxRegime: 'New Regime' };
+    }
     
     // Aggregate this month's data
     let overtimeHours = 0;
