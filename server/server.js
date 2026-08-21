@@ -304,7 +304,7 @@ app.get('/*splat', (req, res, next) => {
     res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
-app.listen(port, () => {
-    console.log(`MyHRTool Backend API running on http://localhost:${port}`);
+app.listen(port, '0.0.0.0', () => {
+    console.log(`MyHRTool Backend API running on http://0.0.0.0:${port}`);
 });
 
