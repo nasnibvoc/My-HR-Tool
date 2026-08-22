@@ -119,18 +119,28 @@ input, select, textarea { font-family: inherit; outline: none; }
 .logo {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #a78bfa, #818cf8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    gap: 10px;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text-main);
+    text-transform: uppercase;
 }
 
-.logo-icon {
-    font-size: 26px;
-    -webkit-text-fill-color: #a78bfa;
+.logo-img {
+    height: 32px;
+    width: auto;
+}
+
+body.light-mode .logo-dark-mode { display: none !important; }
+body.light-mode .logo-light-mode { display: block !important; }
+
+body:not(.light-mode) .logo-dark-mode { display: block !important; }
+body:not(.light-mode) .logo-light-mode { display: none !important; }
+
+.logo-text-hr {
+    font-weight: 300;
+    color: var(--primary);
 }
 
 .sidebar-nav {
