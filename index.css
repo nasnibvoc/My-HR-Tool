@@ -2,16 +2,17 @@
    Premium CSS Variables & Theming
    ========================================== */
 :root {
-    --bg-dark: #0a0f1c;
-    --bg-panel: rgba(15, 23, 42, 0.6);
-    --bg-panel-hover: rgba(30, 41, 59, 0.8);
+    /* Dark Theme Default */
+    --bg-dark: #050505;
+    --bg-panel: rgba(7, 26, 77, 0.4);
+    --bg-panel-hover: rgba(7, 26, 77, 0.7);
     
-    --primary: #8b5cf6;
-    --primary-hover: #7c3aed;
-    --primary-glow: rgba(139, 92, 246, 0.5);
+    --primary: #123FA8;
+    --primary-hover: #0E3286;
+    --primary-glow: rgba(18, 63, 168, 0.5);
     
-    --secondary: #3b82f6;
-    --accent: #f43f5e;
+    --secondary: #071A4D;
+    --accent: #165DFF;
     --success: #10b981;
     --warning: #f59e0b;
     --danger: #ef4444;
@@ -33,6 +34,24 @@
     --radius-full: 9999px;
     
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.light-mode {
+    --bg-dark: #FFFFFF;
+    --bg-panel: #f1f5f9;
+    --bg-panel-hover: #e2e8f0;
+    
+    --primary: #123FA8;
+    --primary-hover: #0E3286;
+    --primary-glow: rgba(18, 63, 168, 0.3);
+    
+    --secondary: #071A4D;
+    --accent: #165DFF;
+    
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    
+    --border-color: rgba(0, 0, 0, 0.1);
 }
 
 /* ==========================================
